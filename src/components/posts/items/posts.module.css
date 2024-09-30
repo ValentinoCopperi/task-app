@@ -1,0 +1,24 @@
+
+
+.taskStatusInProgress{
+    @apply text-green-300 
+}
+.taskStatusPending {
+    @apply text-yellow-400
+}
+
+.taskStatusDone{
+   @apply text-green-500 
+}
+
+.taskStatusCancelled{
+    @apply text-red-600  
+}
+
+.taskIsDoneTrue{
+    @apply text-green-500 
+}
+
+.taskIsDoneFalse{
+    @apply text-red-600  
+}
