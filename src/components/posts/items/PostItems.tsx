@@ -11,10 +11,7 @@ import LikeCommentsVisibility from "./Likes-Comments/LikeCommentsVisibility";
 import AddLike from "./addLike/AddLike";
 
 
-interface Profile {
-    _id: string;
-    username: string;
-}
+
 
 interface Props {
     post: Posts,
@@ -49,7 +46,7 @@ export const PostItem = ({ post , profile }: Props) => {
 
         <article key={post._id} className=" relative w-[90%] mx-auto bg-gray-800 rounded-md ">
 
-            <div className="absolute top-5 right-2">
+            <div className="hidden sm:block absolute top-5 right-2">
                 <div className='p-3 bg-gray-500 rounded-s-full font-semibold'>
                     {post.user.username.slice(0, 1).toLocaleUpperCase()}
                 </div>
@@ -70,7 +67,7 @@ export const PostItem = ({ post , profile }: Props) => {
 
                 </div>
 
-                <Link href={`/category/${post.categories._id}`} className="inline-block px-6 py-1 rounded-full text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-300">
+                <Link href={`/category/${post.categories.name.toLocaleLowerCase()}`} className="inline-block px-6 py-1 rounded-full text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-300">
                     {post.categories.name}
                 </Link>
 

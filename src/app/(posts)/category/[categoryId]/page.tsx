@@ -1,41 +1,37 @@
 import { notFound } from 'next/navigation';
 import React from 'react'
-import { Posts, Category } from '@/types';  // Asegúrate de que estos tipos estén definidos correctamente
+import { Posts } from '@/types';  // Asegúrate de que estos tipos estén definidos correctamente
 import { PostList } from '@/components';
 import { Metadata } from 'next';
 import ButtonVolverHome from '@/components/ui/buttons/ButtonVolverHome';
 
 
-export async function generateMetadata({ params }: { params: { categoryId: string } }): Promise<Metadata> {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-  const cat = await categoryById(params.categoryId)
 
+export async function generateMetadata(): Promise<Metadata> {
 
   return {
-    title: `Posts By ${cat?.name}`,
+    title: `Posts By Category`,
     description: 'Post By Category'
   }
 
 }
 
 
-async function getTaskByCategory(id: string): Promise<Posts[] | null> {
-  const res = await fetch(`http://localhost:3001/tasks/categories/${id}`, { cache: 'no-cache' } );
+async function getTaskByCategoryName(name: string): Promise<Posts[] | null> {
+  const res = await fetch(`${API_URL}/api/tasks/category/${name}`, { cache: 'no-cache' } );
+  
+  const data = await res.json();
+
   if (!res.ok) {
     return null;
   }
-  return res.json();
+
+  return data.posts;
 }
 
-async function categoryById(id: string): Promise<Category | null> {
 
-  const res = await fetch(`http://localhost:3001/categories/${id}`, { cache: 'force-cache' });
-  if (!res.ok) {
-    return null; // Retorna null si no existe la categoría
-  }
-  return res.json();
-
-}
 
 
 export default async function PostsByCategory({
@@ -44,10 +40,11 @@ export default async function PostsByCategory({
   params: { categoryId: string }
 }) {
 
-  const [posts, category] = await Promise.all([
-    getTaskByCategory(params.categoryId),
-    categoryById(params.categoryId)
-  ]);
+  
+  const category = params.categoryId;
+
+
+  const posts = await getTaskByCategoryName(category);
 
   if (!category) {
     notFound();
@@ -57,7 +54,7 @@ export default async function PostsByCategory({
     return (
       <div>
         <ButtonVolverHome/>
-        <h1 className='text-4xl text-center py-8 '>There are no Posts with {category.name}</h1>
+        <h1 className='text-4xl text-center py-8 '>There are no Posts with {category}</h1>
       </div>
     )
   }
@@ -69,7 +66,7 @@ export default async function PostsByCategory({
           <span 
             className="inline-block px-9 py-5 mb-4 rounded-full text-5xl bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-300"
           >
-            {category.name}
+            {category.toLocaleUpperCase()}
           </span> 
         </div>
         <PostList posts={posts} />

@@ -1,30 +1,33 @@
 import React from 'react'
-import Image from 'next/image'
 import { Posts, UserData } from '@/types'
-import { PostList } from '@/components';
 import Profile from '@/components/profile/Profile';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 async function getProfile(id: string): Promise<UserData> {
 
-  const res = await fetch(`http://localhost:3001/users/${id}`, {  next : { revalidate : 60 } } )
+  const res = await fetch(`${API_URL}/api/users/${id}`, {  next : { revalidate : 60 } } )
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch user data');
+  const data = await res.json();
+
+  if (!data.ok) {
+    throw new Error(data.message);
   }
 
-  return await res.json();
+  return data.user;
 
  
 }
 
 async function getTasks(id: string): Promise<Posts[]> {
-  const res = await fetch(`http://localhost:3001/tasks/user/${id}`, { next : { revalidate : 60 }  })
+  const res = await fetch(`${API_URL}/api/tasks/user/${id}`, { next : { revalidate : 60 }  })
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch user data');
+  const data = await res.json();
+
+  if (!data.ok) {
+    throw new Error(data.message);
   }
 
-  return await res.json();
+  return data.tasks;
 }
 
 export default async function UserProfile({

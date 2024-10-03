@@ -1,8 +1,5 @@
 import { SideBar } from '@/components';
-import NotifyCookieChange from '@/components/cookies/NotifyCookieChange';
 import ProfileMenu from '@/components/profile-menu/ProfileMenu';
-import SearchUsers from '@/components/search/Search';
-import Search from '@/components/search/Search';
 import SideBarDesktop from '@/components/ui/SideBarDesktop';
 import { cookies } from 'next/headers';
 import React, { ReactNode } from 'react';
@@ -17,7 +14,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const useCookies = cookies()
     
-  const token = String(useCookies.get('TOKENUSER')?.value);
+  const token = String(useCookies.get('SESSION_USER')?.value);
 
   const sessionData  = jwt.decode(token) as DecodedToken;
 

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import './globals.css'
-import AuthProvider from "@/libs/auth/SessionProvider";
 
 export const metadata: Metadata = {
   title: "TaskAPP",

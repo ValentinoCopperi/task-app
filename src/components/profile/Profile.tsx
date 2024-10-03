@@ -1,5 +1,4 @@
 import { DecodedToken, Posts, UserData } from '@/types'
-import Image from 'next/image'
 import React from 'react'
 import { PostList } from '../posts/PostsGrid'
 import { cookies } from 'next/headers'
@@ -16,7 +15,7 @@ export default function Profile( { user , posts }  : Props ) {
 
     const useCookies = cookies()
     
-    const token = String(useCookies.get('TOKENUSER')?.value);
+    const token = String(useCookies.get('SESSION_USER')?.value);
 
     const sessionData  = jwt.decode(token) as DecodedToken;
 

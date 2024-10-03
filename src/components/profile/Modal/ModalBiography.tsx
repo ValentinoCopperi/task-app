@@ -2,19 +2,20 @@ import { XIcon } from 'lucide-react';
 import React, { useState } from 'react'
 import * as api from '@/helpers/todos/todos'
 import { useRouter } from 'next/navigation';
+
 interface Props {
     handleModalBiography: () => void;
-    bio? : string | undefined
+    bio?: string | undefined
 }
-export default function ModalBiography({ handleModalBiography , bio }: Props) {
 
-    const [value, setValue] = useState<string>( bio ? bio : '' )
+export default function ModalBiography({ handleModalBiography, bio }: Props) {
+    const [value, setValue] = useState<string>(bio ? bio : '');
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false); // Estado de carga
 
     const router = useRouter()
 
-    const handleNewBy = async () => {
-
+    const handleNewBio = async () => {
         if (value.length < 1) {
             setError("Biography cannot be empty.");
             setTimeout(() => setError(null), 3000);
@@ -22,11 +23,10 @@ export default function ModalBiography({ handleModalBiography , bio }: Props) {
         }
 
         try {
-
-            await api.updateBio(value)
+            setLoading(true); // Inicia el estado de carga
+            await api.updateBio(value);
             router.refresh();
-            setError('Biography updated')
-
+            setError('Biography updated');
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -34,8 +34,9 @@ export default function ModalBiography({ handleModalBiography , bio }: Props) {
                 setError('Unknown error happened');
             }
             setTimeout(() => setError(null), 3000);
+        } finally {
+            setLoading(false); // Finaliza el estado de carga
         }
-
     }
 
     return (
@@ -57,22 +58,11 @@ export default function ModalBiography({ handleModalBiography , bio }: Props) {
                     />
                     <div className="flex justify-end">
                         <button
-                            onClick={handleNewBy}
-                            className="
-                bg-blue-600 
-                text-white 
-                py-2 
-                px-4 
-                rounded-lg 
-                hover:bg-blue-700 
-                focus:outline-none 
-                focus:ring-2 
-                focus:ring-blue-500 
-                transition-colors 
-                duration-300        
-              "
+                            onClick={handleNewBio}
+                            disabled={loading} // Deshabilita el botón durante la carga
+                            className={`bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            Update
+                            {loading ? 'Updating...' : 'Update'}
                         </button>
                     </div>
                     {error && (

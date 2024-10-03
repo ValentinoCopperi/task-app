@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
-const loading = () => {
+const LoadingComponent = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -37,4 +37,8 @@ const loading = () => {
   );
 };
 
-export default loading;
+const Loading = () => {
+  return <LoadingComponent />;
+};
+
+export default Loading;

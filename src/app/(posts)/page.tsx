@@ -1,12 +1,8 @@
 import React from 'react';
 import type { Category, Posts } from '@/types';
-import TaskInput from '@/components/createPost/TaskInput';
-import TaskFilters from '@/components/createPost/TaskFilters';
 import { PostList } from '@/components';
 import TaskForm from '@/components/createPost/TaskForm';
 import { getPosts } from '@/actions';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/libs';
 
 
 
@@ -22,7 +18,7 @@ import { authOptions } from '@/libs';
 // }
 
 async function getCategories(): Promise<Category[]> {
-    const res = await fetch('http://localhost:3001/categories', { cache: 'force-cache' });
+    const res = await fetch('https://nestjs-taskapi-production.up.railway.app/categories', { cache: 'force-cache' });
 
     if (!res.ok) {
         throw new Error('Failed to fetch Categories');
@@ -46,7 +42,7 @@ export default async function Posts( { searchParams }  : Props ) {
     const page = searchParams.page ? parseInt( searchParams.page ) : 1;
 
     const [{postsData , totalPages}, categories ] = await Promise.all([
-        getPosts({page,take:4}),
+        getPosts({page,take:3}),
         getCategories(),
     ]);
    

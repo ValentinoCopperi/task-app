@@ -22,13 +22,13 @@ export const PostList = ({ posts, totalPages = 1 }: Props) => {
     const path = usePathname();
 
     useEffect(() => {
-        const token = Cookies.get("TOKENUSER");
+        const token = Cookies.get("SESSION_USER");
         if (token) {
-            const decoded: any = jwt_decode.jwtDecode(token);
+            const decoded : DecodedToken = jwt_decode.jwtDecode(token);
             setDecodedToken(decoded);
         }
-    }, [ Cookies.get('TOKENUSER') ]);
-
+    }, [ Cookies.get('SESSION_USER') ]);
+   
 
     if (!posts || posts.length === 0) {
         return (

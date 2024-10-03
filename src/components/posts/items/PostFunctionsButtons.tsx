@@ -49,12 +49,12 @@ export default function PostFunctionsButtons({ _idUserPost, _idSesion, _idPost, 
             await api.deleteTodo(id);
 
             setMsg('Task deleted successfuly');
-
+            router.refresh()
+            
             setTimeout(() => {
                 setMsg(null);
             }, 3000);
 
-            router.refresh()
 
         } catch (error) {
 

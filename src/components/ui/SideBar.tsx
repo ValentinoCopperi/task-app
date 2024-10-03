@@ -4,7 +4,6 @@ import clsx from "clsx"
 import { IoCloseOutline, IoMenu } from "react-icons/io5"
 import SideBarItems from "./SideBarItems"
 import { useEffect, useState } from "react"
-import { getCookie , setCookie} from 'cookies-next';
 import { usePathname } from "next/navigation"
 import SearchUsers from "../search/Search"
  

@@ -1,6 +1,4 @@
 import { Posts } from "@/types";
-import { ObjectId } from 'mongodb';
-import mongoose from "mongoose";
 import * as mongo from '@/mongodb/index'
 
 interface NavigationData {
@@ -8,7 +6,14 @@ interface NavigationData {
     take? : number;
 }
 
-export async function getPosts({ page = 1, take = 6 }: NavigationData = {}): Promise<any> {
+interface Res {
+
+    currentPage : number,
+    totalPages : number,
+    postsData : Posts[]
+
+}
+export async function getPosts({ page = 1, take = 6 }: NavigationData = {}): Promise<Res> {
 
     if (isNaN(Number(page))) page = 1;
     if (page < 1) page = 1;

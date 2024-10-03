@@ -1,36 +1,16 @@
-import dbConnect from '@/libs/mongo/mongo';
 import { ObjectId } from 'mongodb';
-import mongoose from 'mongoose';
 import { NextResponse } from 'next/server';
 import * as Yup from 'yup'
-
-
-interface Segments {
-    params : {
-        taskId : string;
-    }
-}
-
-
-export async function getModel(modelName : string) {
-
-    if(!modelName){
-        throw new Error('Tasks collection not found');
-    }
-
-    await dbConnect();
-    const model = mongoose.connection.db?.collection(modelName);
-
-    if (!model) {
-        throw new Error('Tasks collection not found');
-    }
-
-    return model;
-}
+import { Segment } from 'next/dist/server/app-render/types';
+import * as mongo from '@/mongodb/index'
+import * as jwt from '@/libs/token/token-verify'
 
 
 
-export async function GET(request: Request , segment : Segments) {
+
+
+
+export async function GET(request: Request , segment : Segment) {
 
     try {
 
@@ -38,7 +18,7 @@ export async function GET(request: Request , segment : Segments) {
         
         const id =  new ObjectId(params.taskId)
 
-        const taskModel = await getModel('tasks');
+        const taskModel = await mongo.getModel('tasks');
 
         const task = await taskModel.findOne({_id : id});
 
@@ -53,17 +33,66 @@ export async function GET(request: Request , segment : Segments) {
         // Retornar las tareas en formato JSON
         return NextResponse.json(task);
 
-    } catch (error : any) {
+    } catch (error : unknown) {
         // Registro del error en la consola para depuración
         console.error('Error fetching tasks:', error);
 
         // Devolver una respuesta de error al cliente
         return NextResponse.json(
-            { message: 'Error fetching tasks', error: error.message },
+            { message: 'Error fetching tasks', error: error },
             { status: 500 }
         );
     }
     
+}
+
+export async function DELETE(request : Request , segments : Segment){
+
+    try {
+        
+        const token_data =  jwt.decoded_token();
+
+        if(!token_data){
+            return NextResponse.json(
+                {
+                    ok: false,
+                    message: 'Must be logged in',
+                },
+                { status: 401 }
+            );
+        }
+
+        const model = await mongo.getModel('tasks');
+
+        const { params } = segments;
+
+        const post_id = new ObjectId(String(params.taskId));
+
+       await model.findOneAndDelete({_id : post_id})
+
+        return NextResponse.json(
+            {
+                ok: true,
+                message: 'Task Deleted',
+                status : 201
+            },
+            { status: 201 }
+        );
+
+        
+
+    } catch (error) {
+        return NextResponse.json(
+            {
+                ok: false,
+                message: error,
+                status : 500
+            },
+            { status: 500 }
+        );
+    }
+
+
 }
 
 //TODO FIX POST FUNCTION
@@ -73,14 +102,13 @@ const taskPutSchema = Yup.object().shape({
     description: Yup.string().min(3).max(40),
     categories: Yup.object()
 });
-export async function PUT(request : Request , segment : Segments){
+export async function PUT(request : Request){
 
 
     try {
 
-        const { params } = segment;
 
-        const taskModel = await getModel('tasks');
+        const taskModel = await mongo.getModel('tasks');
 
         //VALIDAMOS QUE EL BODY COINCIDA CON TASKPOSTSCHEMA
         const body = await taskPutSchema.validate( await request.json() );

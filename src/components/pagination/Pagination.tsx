@@ -2,7 +2,6 @@
 import { generatePagination } from "@/libs/generate-pagination/generate-pagination";
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react"
 
 interface Props {
     totalPages: number;
@@ -10,8 +9,7 @@ interface Props {
 
 export const Pagination = ({ totalPages }: Props) => {
 
-    const [pages, setPages] = useState(["1", "2", "3", , "...", "8", "9", "10",])
-    const [currentPage, setCurrentPage] = useState("1")
+   
 
     const pathname = usePathname();
     const searchParams = useSearchParams();

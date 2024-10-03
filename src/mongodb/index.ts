@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { ObjectId } from 'mongodb';
 
 
-export function serializeMongoObject(obj: any): any {
+export function serializeMongoObject(obj: unknown): unknown {
     if (Array.isArray(obj)) {
         // Si obj es un array, serializamos cada elemento recursivamente
         return obj.map(item => serializeMongoObject(item));
@@ -18,7 +18,7 @@ export function serializeMongoObject(obj: any): any {
     }
 
     if (typeof obj === 'object' && obj !== null) {
-        const newObj: any = {};
+        const newObj: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(obj)) {
             newObj[key] = serializeMongoObject(value);
         }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import * as api from '@/helpers/todos/todos'
+import * as api from '@/helpers/todos/todos';
 import DateTimeDisplay from '../../timePostCreated/TimePost';
 import { SuccessMessage } from '@/components/ui/successMessage/SuccessMessage';
 import { useRouter } from 'next/navigation';
@@ -17,33 +17,44 @@ interface Props {
   profile?: DecodedToken | null;
 }
 
-
-
 export default function LikeCommentsVisibility({ post, profile }: Props) {
-
-
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [msgResponse, setMsgResponse] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); // Para manejar el estado de carga
 
   const router = useRouter();
 
   const handleDeleteComment = async (commentId: string, postId: string) => {
+    setLoading(true);
     try {
       await api.deleteComment(postId, commentId);
+      setMsgResponse('Comment deleted successfully!');
       router.refresh();
     } catch (error) {
+      let errorMessage = 'Unknown error happened';
+
       if (error instanceof Error) {
-        setMsgResponse(error.message);
-      } else {
-        setMsgResponse('Unknown error happened');
+        if (error.message === 'Failed to fetch') {
+          errorMessage = 'Network error. Please try again later.';
+        } else if (error.message === 'Unauthorized') {
+          errorMessage = 'You are not authorized to delete this comment.';
+        } else if (error.message === 'Task not found') {
+          errorMessage = 'Post or comment not found.';
+        } else {
+          errorMessage = error.message;
+        }
       }
-      setTimeout(() => setMsgResponse(null), 3000);
+
+      setMsgResponse(errorMessage);
+    } finally {
+      setLoading(false);
+      setTimeout(() => setMsgResponse(null), 3000); // El mensaje se desaparece después de 3 segundos
     }
   };
 
   return (
-    <div className="flex  py-4 space-x-8">
+    <div className="flex py-4 space-x-8">
       <button
         onClick={() => setIsLikesModalOpen(true)}
         className="flex items-center text-blue-400 hover:text-blue-300 transition-colors duration-300"
@@ -76,9 +87,13 @@ export default function LikeCommentsVisibility({ post, profile }: Props) {
               {comment.username === profile?.username && (
                 <button
                   onClick={() => handleDeleteComment(comment._id, post._id)}
-                  className="text-red-400 hover:text-red-600 transition-colors duration-300 text-sm"
+                  className={clsx(
+                    'text-red-400 hover:text-red-600 transition-colors duration-300 text-sm',
+                    { 'cursor-not-allowed opacity-50': loading } // Deshabilitar botón si está cargando
+                  )}
+                  disabled={loading}
                 >
-                  Delete
+                  {loading ? 'Deleting...' : 'Delete'}
                 </button>
               )}
             </div>
@@ -86,7 +101,7 @@ export default function LikeCommentsVisibility({ post, profile }: Props) {
         ))}
       </Modal>
 
-      {msgResponse && <SuccessMessage message={msgResponse} bg="bg-red-400" />}
+      {msgResponse && <SuccessMessage message={msgResponse} bg={msgResponse.includes('successfully') ? 'bg-green-400' : 'bg-red-400'} />}
     </div>
   );
 }

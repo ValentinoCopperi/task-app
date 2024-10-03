@@ -1,38 +1,41 @@
 "use client"
-import {  UserLogin } from '@/types'
 import React, { FormEvent, useState } from 'react'
 import Link from 'next/link';
 import { login } from '@/helpers';
-import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 
-interface Res {
-  msg : string;
-  username? : string;
-}
-
-
 export default function Login() {
-  
-  
+
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const[loginResponse,setLoginResponse] = useState<string | null>(null)
+  const [loginStatus, setLoginStatus] = useState<{
+    message: string;
+    isError: boolean;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
-  const handleLogin = (e : FormEvent<HTMLFormElement>) =>{
-    
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    login({email,password})
-    .then((res : Res) => {
-      setLoginResponse(res.msg)
-      router.refresh()
-    })
-    .catch(error => setLoginResponse(error))
-    
-    
+    setIsLoading(true);
+    setLoginStatus(null);
+
+    try {
+      const res = await login({ email, password });
+      setLoginStatus({ message: res.message, isError: false });
+      router.refresh();
+      // Optionally, redirect the user or update global state here
+    } catch (error) {
+      setLoginStatus({
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        isError: true
+      });
+    } finally {
+      setIsLoading(false);
+    }
+
   }
 
   return (
@@ -68,16 +71,17 @@ export default function Login() {
               type="submit"
               className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Iniciar sesión
+             {isLoading ? 'Logging in...' : 'Log in'}
             </button>
           </div>
-          {
-            loginResponse && (
-              <p className='text-center text-red-700'> {loginResponse} </p>
-            )
-          }
+         
+          {loginStatus && (
+            <p className='text-center' style={{ color: loginStatus.isError ? 'red' : 'green' }}>
+              {loginStatus.message}
+            </p>
+          )}
           <div className='text-center'>
-            <Link className= 'text-blue-500 underline' href={'/auth/register'}>Create Account</Link>
+            <Link className='text-blue-500 underline' href={'/auth/register'}>Create Account</Link>
           </div>
         </form>
       </div>

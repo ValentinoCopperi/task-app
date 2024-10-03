@@ -1,14 +1,11 @@
 "use client"
 
 import Link from 'next/link'
-import { redirect, usePathname, useRouter } from 'next/navigation'
+import {  usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { IoCart, IoHome, IoLogIn, IoLogOut, IoPerson, IoSearch } from "react-icons/io5"
+import {  IoHome, IoLogIn, IoLogOut, IoPerson, IoSearch } from "react-icons/io5"
 import * as api from '@/helpers/index'
-import { hasCookie, getCookie } from 'cookies-next'
-import Search from '../search/Search'
-import { signIn, useSession } from 'next-auth/react'
-import LogoutBtn from './buttons/Logout'
+import { hasCookie } from 'cookies-next'
 
 interface Props {
     handleSearchOpen: () => void;
@@ -40,8 +37,8 @@ export default function SideBarItems({ handleSearchOpen }: Props) {
 
 
     useEffect(() => {
-        setIsLoggedIn(hasCookie("TOKENUSER"));
-    }, [hasCookie("TOKENUSER")]);
+        setIsLoggedIn(hasCookie("SESSION_USER"));
+    }, [hasCookie("SESSION_USER")]);
 
 
 

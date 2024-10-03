@@ -1,20 +1,22 @@
 import { Posts } from '@/types'
-import { redirect } from 'next/dist/server/api-utils'
-import { headers } from 'next/headers'
 import React from 'react'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 interface Props {
   profile : { _id: string, username: string }
 }
 
 async function getTasks(id: string): Promise<Posts[]> {
-  const res = await fetch(`http://localhost:3001/tasks/user/${id}`, { cache: 'no-cache' })
+  const res = await fetch(`${API_URL}/api/tasks/user/${id}`, { cache: 'no-cache' })
 
-  if (!res.ok) {
+  const data  =  await res.json();
+
+  if (!data.ok) {
     throw new Error('Failed to fetch user data');
   }
 
-  return await res.json();
+  return data.tasks;
 }
 
 const getTotalLikes = (posts: Posts[]) => {

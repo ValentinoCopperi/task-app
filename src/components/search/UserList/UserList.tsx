@@ -7,7 +7,7 @@ import Link from 'next/link';
 const USERS_PER_PAGE = 10;
 
 async function fetchUsers(): Promise<UserData[]> {
-    const res = await fetch('http://localhost:3001/users', { cache: 'no-store' });
+    const res = await fetch('https://nestjs-taskapi-production.up.railway.app/users', { cache: 'no-store' });
     if (!res.ok) {
         throw new Error('Failed to fetch users');
     }
