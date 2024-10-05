@@ -55,7 +55,7 @@ export default function TaskForm({ categories }: Props) {
             showSuccessMessage(SUCCESS_MESSAGE);
             router.refresh();
         } catch (err: unknown) {
-            handleError(err); // Corregimos el nombre de la variable 'error'
+            setError("Error! . Please check to be logged in"); // Corregimos el nombre de la variable 'error'
         }
     };
 
