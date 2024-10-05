@@ -55,7 +55,7 @@ export default function TaskForm({ categories }: Props) {
             showSuccessMessage(SUCCESS_MESSAGE);
             router.refresh();
         } catch (err: unknown) {
-            setError("Error! . Please check to be logged in"); // Corregimos el nombre de la variable 'error'
+            setError("Error! .Please check to be logged in"); // Corregimos el nombre de la variable 'error'
         }
     };
 
@@ -70,16 +70,7 @@ export default function TaskForm({ categories }: Props) {
         setTimeout(() => setSuccessMessage(null), 3000);
     };
 
-    const handleError = (err: unknown) => {
-        if (err instanceof Error) {
-            const errorMessage = err.message === 'Unauthorized'
-                ? ERROR_MESSAGES.UNAUTHORIZED
-                : err.message;
-            setError(errorMessage);
-        } else {
-            setError('An unexpected error occurred.');
-        }
-    };
+  
 
     return (
         <form onSubmit={handleCreateTodo}>
