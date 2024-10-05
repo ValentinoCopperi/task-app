@@ -20,7 +20,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-8 gap-x-7 text-white bg-gray-950">
+    <div className="grid grid-cols-1 md:grid-cols-8 gap-x-7 ">
       <div className=" h-full  lg:col-span-2">
         <SideBar />
         <SideBarDesktop />
