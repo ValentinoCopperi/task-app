@@ -4,6 +4,7 @@ import './globals.css'
 export const metadata: Metadata = {
   title: "TaskAPP",
   description: "Share your tasks with friends and relatives",
+  icons : "/logo.png"
 };
 
 export default function RootLayout({

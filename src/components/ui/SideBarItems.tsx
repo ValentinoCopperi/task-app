@@ -48,7 +48,7 @@ export default function SideBarItems({ handleSearchOpen }: Props) {
 
             {/* TITLE */}
 
-            <Link href={'/'} className="text-3xl pt-4 ">TaskAPP</Link>
+            <Link href={'/'} className="text-3xl pt-4 font-bold ">Twitter</Link>
 
 
             {/* Menu */}
